@@ -3,18 +3,16 @@
 
 import axios from 'axios';
 
-const request = axios.create({
+const instance = axios.create({
     baseURL: '',
     timeout: 10000,
 })
-
-
 
 /**
  * 请求拦截
  * 可个性化配置
  */
-request.interceptors.request.use(requestConfig => {
+instance.interceptors.request.use(requestConfig => {
     const token = localStorage.getItem('token')
 
     if (token) {
@@ -29,7 +27,7 @@ request.interceptors.request.use(requestConfig => {
  * 响应拦截
  * 可个性化配置
  */
-request.interceptors.response.use(response => {
+instance.interceptors.response.use(response => {
     return response.data;
 }, err => {
 
@@ -41,4 +39,23 @@ request.interceptors.response.use(response => {
 })
 
 
-export default request;
+
+// 统一接口处理
+export const get = (url, params, headers) => {
+    return instance.request({url, params, headers, method: 'GET'})
+}
+
+export const post = (url, params, headers) => {
+    return instance.request({url, params, headers, method: 'POST'})
+}
+
+export const del = (url, params, headers) => {
+    return instance.request({url, params, headers, method: 'DELETE'})
+}
+
+export const patch = (url, params, headers) => {
+    return instance.request({url, params, headers, method: 'PATCH'})
+}
+
+
+export default instance;

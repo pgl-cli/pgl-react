@@ -1,11 +1,10 @@
 
 import React, { useEffect } from 'react'
-import './App.css';
+import './App.less';
 
-import { getList } from '@/services'
+import { getList } from '@/services/common'
 // import request from '@/utils/request';
 function App() {
-
 
   useEffect(() => {
     /** 
@@ -18,7 +17,7 @@ function App() {
 
   return (
     <div className="App">
-      这是创建好的react项目
+      pgl
     </div>
   );
 }

@@ -2,6 +2,8 @@
 import React, { useEffect } from 'react'
 import './App.less';
 
+import { Button } from 'antd'
+
 import { getList } from '@/services/common'
 // import request from '@/utils/request';
 function App() {
@@ -17,7 +19,7 @@ function App() {
 
   return (
     <div className="App">
-      pgl
+      pgl <Button type='primary'>点击测试</Button>
     </div>
   );
 }

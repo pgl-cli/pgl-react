@@ -2,60 +2,67 @@
 
 
 import axios from 'axios';
+import { AxiosCancelers } from './axiosCancel'
 
-const instance = axios.create({
+
+const config = {
     baseURL: '',
     timeout: 10000,
-})
+    withCredentials: true, // 跨域凭证携带
+}
 
-/**
- * 请求拦截
- * 可个性化配置
- */
-instance.interceptors.request.use(requestConfig => {
-    const token = localStorage.getItem('token')
 
-    if (token) {
-        requestConfig.headers['token'] = token
+const axiosCancel = new AxiosCancelers()
+
+class RequestHttp {
+    constructor(config) {
+        this.instance = axios.create(config);
+        /**
+         * 请求拦截
+         */
+        this.instance.interceptors.request.use(config => {
+            axiosCancel.addPending(config);
+            // 需要添加token自行设置
+            const token = '';
+
+            return { ...config, headers: { "token": token } }
+        })
+
+        /** 
+         * 响应拦截
+        */
+        this.instance.interceptors.response.use(response => {
+            /**
+             * 自行配置响应请求拦截
+             */
+            const { data, config } = response;
+            // 在请求结束后，移除本次请求
+            axiosCancel.removePending(config)
+
+
+            return data;
+        }, err => {
+            return Promise.reject(err)
+        })
+
     }
 
-    return requestConfig;
-}, err => Promise.reject(err));
+    get = (url, params, headers) => {
+        return this.instance.request({ url, params, headers, method: 'GET' })
+    }
 
+    post = (url, params, headers) => {
+        return this.instance.request({ url, params, headers, method: 'POST' })
+    }
 
-/**
- * 响应拦截
- * 可个性化配置
- */
-instance.interceptors.response.use(response => {
-    return response.data;
-}, err => {
+    delete = (url, params, headers) => {
+        return this.instance.request({ url, params, headers, method: 'DELETE' })
+    }
 
-    /**
-     * 可根据接口返回状态配置不同响应
-     */
-
-    return Promise.reject(err);
-})
-
-
-
-// 统一接口处理
-export const get = (url, params, headers) => {
-    return instance.request({url, params, headers, method: 'GET'})
-}
-
-export const post = (url, params, headers) => {
-    return instance.request({url, params, headers, method: 'POST'})
-}
-
-export const del = (url, params, headers) => {
-    return instance.request({url, params, headers, method: 'DELETE'})
-}
-
-export const patch = (url, params, headers) => {
-    return instance.request({url, params, headers, method: 'PATCH'})
+    patch = (url, params, headers) => {
+        return this.instance.request({ url, params, headers, method: 'PATCH' })
+    }
 }
 
 
-export default instance;
+export default new RequestHttp(config);

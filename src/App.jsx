@@ -1,25 +1,20 @@
 
 import React, { useEffect } from 'react'
+import ReactDOM from 'react-dom/client';
 import './App.less';
 
 import { Button } from 'antd'
 
-import { getList } from '@/services/common'
-// import request from '@/utils/request';
 function App() {
 
-  useEffect(() => {
-    /** 
-     * 示例：也可用async await
-    */
-    getList().then(res => {
-      console.log(res, 'sss')
-    })
-  }, [])
+
+  const handleClick = () => {
+    console.log('pgl')
+  }
 
   return (
     <div className="App">
-      pgl <Button type='primary'>点击测试</Button>
+     <Button type='primary' onClick={handleClick}>点击测试</Button>
     </div>
   );
 }
